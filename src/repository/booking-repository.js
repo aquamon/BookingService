@@ -19,6 +19,34 @@ class BookingRepository {
             );
         }
     }
+
+    async updateBooking(bookingId,data){
+        try{
+            // await Booking.update(data , {
+            //     where : {
+            //         id : bookingId
+            //     }
+            // }); 
+            // return true;
+            // --another way of updating
+            const booking = await Booking.findByPk(bookingId);
+            if(data.status){
+                booking.status = data.status;
+            }
+            await booking.save();
+            return booking;
+        }catch(error){
+            if(error.name == 'SequelizeValidationError'){
+                throw new ValidationError(error);
+            }
+            throw new AppError(
+                'RepositoryError',
+                'Cannot Update the Booking',
+                'There was some issue updating booking, please try again later',
+                StatusCodes.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
 }
 
 module.exports = BookingRepository;
